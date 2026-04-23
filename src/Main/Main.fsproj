@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PureDomain\PureDomain.fsproj" />
+    <ProjectReference Include="..\Core\Core.fsproj" />
+    <ProjectReference Include="..\IO\IO.fsproj" />
+  </ItemGroup>
+
+</Project>

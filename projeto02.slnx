@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Core/Core.fsproj" />
+    <Project Path="src/IO/IO.fsproj" />
+    <Project Path="src/Main/Main.fsproj" />
+    <Project Path="src/PureDomain/PureDomain.fsproj" />
+  </Folder>
+  <Project Path="Sharp.Tests/Sharp.Tests.fsproj" />
+</Solution>

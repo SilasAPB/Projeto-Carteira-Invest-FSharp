@@ -122,7 +122,7 @@ let consolidateAdjCloseData () : unit =
                     allData.[date].[ticker] <- adjClose
         
             // Create consolidated CSV
-            let outputPath = Path.Combine(__SOURCE_DIRECTORY__, "..", "..", "dados", "consolidated_adj_close.csv")
+            let outputPath = Path.Combine(__SOURCE_DIRECTORY__, "..", "..", "dados", "dados_consolidados.csv")
             
             use writer = new StreamWriter(outputPath)
             
@@ -160,6 +160,11 @@ let consolidateAdjCloseData () : unit =
             
             printfn "Arquivo consolidado criado: %s" outputPath
             printfn "Datas: %d | Empresas: %d" sortedDates.Length allTickers.Length
+
+
+
+
+
 
 let downloadDados () : Async<unit> = async {
     consolidateAdjCloseData()

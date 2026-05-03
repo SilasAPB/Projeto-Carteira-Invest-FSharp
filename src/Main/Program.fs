@@ -4,7 +4,8 @@ open IO.DataLoader
 
 let run () = async {
     // Baixa dados se necessário
-    do! downloadDados()
+    if not (System.IO.File.Exists(System.IO.Path.Combine(__SOURCE_DIRECTORY__, "..", "..", "dados", "dados_consolidados.csv"))) then
+        do! downloadDados()
     
     // Resto da lógica aqui
     printfn "Iniciando simulação..."

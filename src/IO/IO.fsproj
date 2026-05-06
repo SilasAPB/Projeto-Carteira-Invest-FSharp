@@ -6,6 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="RawLoader.fs" />
+    <Compile Include="APILoader.fs" />
     <Compile Include="DataLoader.fs" />
   </ItemGroup>
 

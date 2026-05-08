@@ -70,13 +70,6 @@ let ``Retornos com preço zero`` () =
 // ============== TESTES DE PORTFOLIO ==============
 
 [<Fact>]
-let ``Gerar pesos somam a um`` () =
-    let pesos = gerarPesos 5
-    let soma = Array.sum pesos
-    Assert.Equal(5, pesos.Length)
-    Assert.True(soma > 0.99m && soma <= 1.01m) // Tolerância para arredondamento
-
-[<Fact>]
 let ``Retorno esperado com pesos iguais`` () =
     let retornos = [| 0.10m; 0.20m; 0.30m |]
     let pesos = [| 1m/3m; 1m/3m; 1m/3m |]

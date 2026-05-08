@@ -55,15 +55,7 @@ module Functions =
             |]
     
     // ============== FUNÇÕES DE PORTFOLIO ==============
-    
-    /// Gera pesos aleatórios que somam a 1
-    let gerarPesos (n: int) : decimal[] =
-        if n <= 0 then [||]
-        else
-            let pesos_aleatorios = Array.init n (fun _ -> System.Random().NextDouble() |> decimal)
-            let soma = pesos_aleatorios |> Array.sum
-            pesos_aleatorios |> Array.map (fun p -> p / soma)
-    
+
     /// Calcula o retorno esperado da carteira
     /// Entrada: array de retornos médios por ativo, array de pesos
     /// Saída: retorno esperado ponderado

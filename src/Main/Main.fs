@@ -5,16 +5,14 @@ open IO.RawLoader
 open PureDomain.Types
 
 let run () = async {
-    // Baixa dados se necessário
-    if not (System.IO.File.Exists(System.IO.Path.Combine(__SOURCE_DIRECTORY__, "..", "..", "dados", "dados_consolidados.csv"))) then
-        do! downloadDados()
+    // Testa API e carrega dados (com fallback para brutos se API falhar)
+    let priceData = loadData()
     
-    // Carrega dados consolidados
-    let priceData = loadConsolidatedData()                                          
-    printfn "Dados carregados: %d tickers, %d dias" priceData.Tickers.Length priceData.Prices.Length
+    printfn ""
+    printfn " Dados carregados: %d tickers, %d dias" priceData.Tickers.Length priceData.Prices.Length
+    printfn "  Tickers: %s" (System.String.Join(", ", priceData.Tickers |> Array.take (System.Math.Min(5, priceData.Tickers.Length))))
+    if priceData.Tickers.Length > 5 then printfn "  ... (e %d mais)" (priceData.Tickers.Length - 5)
     
-    // Resto da lógica aqui
-    printfn "Iniciando simulação..."
 }
 
 [<EntryPoint>]

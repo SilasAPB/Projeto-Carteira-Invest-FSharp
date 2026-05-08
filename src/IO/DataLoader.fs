@@ -4,34 +4,40 @@ open System
 open System.IO
 open System.Collections.Generic
 open System.Text.RegularExpressions
+open System.Net.Http
 
 open PureDomain.Types
 
 
 module DataLoader=
+    let dataInicio = DateTime(2025, 7, 1)
+    let dataFim = DateTime(2025, 12, 31)
+    let apiKeyFmp = "3VNl535JXQwpcOSFURuB3SascaWn9C7t"
 
     let loadConsolidatedData () : PriceData =
-        /// Lê o arquivo CSV consolidado e transforma em matriz
-        /// Retorna: { Tickers = [AAPL, MSFT, ...], Prices = [[dia1_preços], [dia2_preços], ...] }
+        let consolidatedPathApi = Path.Combine(__SOURCE_DIRECTORY__, "..", "..", "dados", "dados_consolidados_api.csv")
+        let consolidatedPathRaw = Path.Combine(__SOURCE_DIRECTORY__, "..", "..", "dados", "dados_consolidados.csv")
         
-        let consolidatedPath = Path.Combine(__SOURCE_DIRECTORY__, "..", "..", "dados", "dados_consolidados.csv")
-        
-        if not (File.Exists(consolidatedPath)) then
-            printfn "Arquivo consolidado não encontrado! Rodando consolidação..."
-            RawLoader.consolidateAdjCloseData()
+        let consolidatedPath = 
+            if File.Exists(consolidatedPathApi) then consolidatedPathApi
+            elif File.Exists(consolidatedPathRaw) then consolidatedPathRaw
+            else
+                RawLoader.consolidateAdjCloseData()
+                consolidatedPathRaw
         
         let lines = File.ReadAllLines(consolidatedPath)
         
-        // Parse header para obter tickers (ignora "DATE" no índice 0)
-        let headerFields = lines.[0].Split(',')
-        let tickers = headerFields.[1..] // Pula "DATE"
+        if lines.Length < 2 then
+            failwith "CSV consolidado vazio ou inválido"
         
-        // Parse dados: cria matriz [dia][ação]
+        let headerFields = lines.[0].Split(',')
+        let tickers = headerFields.[1..]
+        
         let prices =
-            lines.[1..]  // Pula header
+            lines.[1..]
             |> Array.map (fun line ->
-                let fields = RawLoader.parseCsvFields line |> List.toArray  // Usa RawLoader
-                fields.[1..]  // Pula DATE
+                let fields = RawLoader.parseCsvFields line |> List.toArray
+                fields.[1..]
                 |> Array.map (fun field ->
                     match System.Decimal.TryParse(field) with
                     | (true, value) -> value
@@ -43,3 +49,6 @@ module DataLoader=
             Tickers = tickers
             Prices = prices
         }
+
+    let loadData () : PriceData =
+        loadConsolidatedData ()

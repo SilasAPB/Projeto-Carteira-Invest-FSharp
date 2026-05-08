@@ -6,13 +6,18 @@ open System.Collections.Generic
 open System.Text.RegularExpressions
 open System.Net.Http
 
-open PureDomain.Types
+open Core.Types
 
 
 module DataLoader=
     let dataInicio = DateTime(2025, 7, 1)
     let dataFim = DateTime(2025, 12, 31)
-    let apiKeyFmp = "3VNl535JXQwpcOSFURuB3SascaWn9C7t"
+    let private apiKeyFmpFallback = "3VNl535JXQwpcOSFURuB3SascaWn9C7t"
+
+    let private getApiKeyFmp () : string =
+        match Environment.GetEnvironmentVariable("FMP_API_KEY") with
+        | null | "" -> apiKeyFmpFallback
+        | value -> value
 
     let loadConsolidatedData () : PriceData =
         let consolidatedPathApi = Path.Combine(__SOURCE_DIRECTORY__, "..", "..", "dados", "dados_consolidados_api.csv")
@@ -51,4 +56,8 @@ module DataLoader=
         }
 
     let loadData () : PriceData =
-        loadConsolidatedData ()
+        let apiKey = getApiKeyFmp ()
+
+        match APILoader.loadDataFromApi dataInicio dataFim apiKey with
+        | Some data when data.Tickers.Length > 0 && data.Prices.Length > 0 -> data
+        | _ -> loadConsolidatedData ()

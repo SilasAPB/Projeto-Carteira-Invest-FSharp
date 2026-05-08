@@ -3,7 +3,7 @@ open System
 open System.IO
 open System.Collections.Generic
 open System.Text.RegularExpressions
-open PureDomain.Types
+open Core.Types
 
 module RawLoader =
     let private monthToNumber (month: string) : int =

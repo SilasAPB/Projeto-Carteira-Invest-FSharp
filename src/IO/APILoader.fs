@@ -5,9 +5,16 @@ open System.IO
 open System.Collections.Generic
 open System.Text.RegularExpressions
 
-open PureDomain.Types
+open Core.Types
 
 module APILoader =
+
+    let private dow30Tickers =
+        [|
+            "AAPL"; "AMGN"; "AMZN"; "AXP"; "BA"; "CAT"; "CRM"; "CSCO"; "CVX"; "DIS"
+            "GS"; "HD"; "HON"; "IBM"; "JNJ"; "JPM"; "KO"; "MCD"; "MMM"; "MRK"
+            "MSFT"; "NKE"; "NVDA"; "PG"; "SHW"; "TRV"; "UNH"; "V"; "VZ"; "WMT"
+        |]
 
     let fetchHistoricalData (simbolo: string) (dataInicio: DateTime) (dataFim: DateTime) (apiKey: string) : Async<string> = async {
         try
@@ -83,19 +90,22 @@ module APILoader =
             writer.WriteLine(String.concat "," row)
 
     let loadDataFromApi (dataInicio: DateTime) (dataFim: DateTime) (apiKey: string) : PriceData option =
-        let tickers = ["AAPL";"AMGN";"AMZN";"AXP";"CAT";"CRM";"CSCO";"CVX";"GS";"HD";"HON";"JNJ";"JPM";"KO";"MCD";"MRK";"MSFT";"NKE";"NVDA";"PG";"SHW";"TRV";"UNH";"V";"WMT"]
-        
         let fetchAllTickers = async {
-            let mutable jsonList = []
-            
-            for ticker in tickers do
-                let! jsonContent = fetchHistoricalData ticker dataInicio dataFim apiKey
-                if jsonContent <> "" then
-                    jsonList <- (ticker, jsonContent) :: jsonList
-            
-            return jsonList
+            let! results =
+                dow30Tickers
+                |> Array.map (fun ticker ->
+                    async {
+                        let! jsonContent = fetchHistoricalData ticker dataInicio dataFim apiKey
+                        if String.IsNullOrWhiteSpace(jsonContent) then
+                            return None
+                        else
+                            return Some (ticker, jsonContent)
+                    })
+                |> Async.Parallel
+
+            return results |> Array.choose id |> Array.toList
         }
-        
+
         let jsonList = Async.RunSynchronously fetchAllTickers
         
         if jsonList.Length = 0 then

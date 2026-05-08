@@ -6,11 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Types.fs" />
     <Compile Include="Functions.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PureDomain\PureDomain.fsproj" />
   </ItemGroup>
 
 </Project>

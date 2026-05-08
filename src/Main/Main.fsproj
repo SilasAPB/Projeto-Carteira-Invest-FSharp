@@ -11,7 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PureDomain\PureDomain.fsproj" />
     <ProjectReference Include="..\Core\Core.fsproj" />
     <ProjectReference Include="..\IO\IO.fsproj" />
   </ItemGroup>
